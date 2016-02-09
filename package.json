@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "",
   "scripts": {
-    "test": "mocha --compilers js:babel-core/register test/*.js && eslint lib test",
+    "test": "mocha --compilers js:babel-register test/*.js && eslint lib test",
     "start": "npm-run-all clean copy --parallel budo watch:*",
     "clean": "rm -rf build && mkdir build",
     "copy": "cp -vr src/*.html assets build/",
@@ -21,9 +21,12 @@
   "devDependencies": {
     "autoprefixer-stylus": "^0.8.1",
     "babel-preset-es2015": "^6.1.18",
+    "babel-register": "^6.5.1",
     "babelify": "^7.2.0",
+    "browserify": "^13.0.0",
     "budo": "^7.0.0",
     "cssmin": "^0.4.3",
+    "html-inline": "^1.2.0",
     "mocha": "^2.4.5",
     "npm-run-all": "^1.5.1",
     "sinon": "^1.17.3",
