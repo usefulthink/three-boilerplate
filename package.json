@@ -1,12 +1,12 @@
 {
-  "name": "jsunconf-logo-test",
+  "name": "three.js",
   "version": "0.1.0",
   "description": "",
   "scripts": {
     "test": "mocha --compilers js:babel-register test/*.js && eslint lib test",
     "start": "npm-run-all clean copy --parallel budo watch:*",
     "clean": "rm -rf build && mkdir build",
-    "copy": "cp -vr src/*.html assets build/",
+    "copy": "cp -vr src/*.html node_modules/three.js/build/three.js assets build/",
     "budo": "budo src/main.js:main.js --dir=build/ -- -t [babelify --presets es2015] -o build/main.js src/main.js",
     "watch:stylus": "stylus --watch --include-css --sourcemap-inline styles/main.styl -u autoprefixer-stylus -o build/main.css",
     "watch:static": "watch 'npm run copy' src/ assets/",
@@ -24,17 +24,37 @@
     "babel-register": "^6.5.1",
     "babelify": "^7.2.0",
     "browserify": "^13.0.0",
+    "browserify-shim": "^3.8.12",
     "budo": "^7.0.0",
     "cssmin": "^0.4.3",
     "html-inline": "^1.2.0",
     "mocha": "^2.4.5",
     "npm-run-all": "^1.5.1",
     "sinon": "^1.17.3",
+    "stats.js": "0.0.14-master",
     "stylus": "^0.52.4",
-    "three": "^0.73.0",
+    "three.js": "file:///Users/martins/local/src/three.js",
+    "tween.js": "^16.3.4",
     "uglifyjs": "^2.4.10",
     "unexpected": "^10.8.1",
     "watch": "^0.16.0"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "babel": {
+    "ignore": [
+      "lib/vendor/*"
+    ]
+  },
+  "browser": {
+    "dat-gui": "./lib/vendor/dat.gui.js"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "three.js": "global:THREE",
+    "dat-gui": "dat"
+  }
 }

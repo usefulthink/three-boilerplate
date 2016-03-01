@@ -1,43 +1,38 @@
-import * as view from './scene';
-import OrbitControls from '../lib/OrbitControls';
-
-
-const {scene, camera, renderer} = view.init();
-
-// ---- setup controls
-const controls = new OrbitControls( camera, renderer.domElement );
-
-controls.enableDamping = true;
-controls.dampingFactor = 0.25;
-controls.enableZoom = false;
+import TWEEN from 'tween.js';
+import Stats from 'stats.js';
+import * as scene from './scene';
 
 
 
-// ---- animation-loop
-/**
- * @param {DOMHighResTimeStamp} timestamp
- */
-function animationLoop(timestamp) {
-  requestAnimationFrame(animationLoop);
-  view.update(timestamp);
-  controls.update();
+const stats = initStats();
+const domElement = scene.init();
 
-  view.render();
-}
+document.body.appendChild(domElement);
 
+requestAnimationFrame(function __loop(timestamp) {
+  requestAnimationFrame(__loop);
 
-// ---- resize canvas and rerender on window-resize
+  stats.begin();
+  TWEEN.update();
+  scene.update(timestamp);
+  scene.render();
+  stats.end();
+});
+
 window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.render(scene, camera);
+  scene.setSize(window.innerWidth, window.innerHeight);
 });
 
 
-document.body.appendChild(renderer.domElement);
 
+function initStats() {
+  const stats = new Stats();
 
-// --- and GO!
-requestAnimationFrame(animationLoop);
+  stats.domElement.style.position = 'absolute';
+  stats.domElement.style.left = '0px';
+  stats.domElement.style.top = '0px';
+
+  document.body.appendChild(stats.domElement);
+
+  return stats;
+}

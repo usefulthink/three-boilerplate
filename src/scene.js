@@ -1,78 +1,69 @@
-import THREE from 'three';
+import THREE from '../lib/three';
 
-let scene, renderer, camera;
+import * as cube from './modules/cube';
+
+let scene, renderer, camera, controls;
 
 export function init() {
+  // ---- renderer
+  renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
+  renderer.setClearColor(0x000000, 0);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+
+  // ---- scene
   scene = new THREE.Scene();
-  renderer = createRenderer();
-  camera = createCamera(scene);
+  scene.fog = new THREE.FogExp2(0x000000, 0.00045);
+  window.scene = scene; // export for three.js inspector
 
-  initScene();
-  initLights(scene);
+  // ---- camera
+  camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
+  camera.position.fromArray([0, 100, 500]);
+  camera.lookAt(new THREE.Vector3(0, 160, 0));
 
-  var box = new THREE.Mesh(
-    new THREE.BoxGeometry(10, 10, 10),
-    new THREE.MeshPhongMaterial());
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
 
-  box.material.color.setHex(0xffffff);
-  box.position.set(0, 0, 0);
+  scene.add(camera);
 
-  scene.add(box);
 
-  return {scene, camera, renderer};
+  // ---- basic lighting
+  const dirLight = new THREE.DirectionalLight(0xffffff, .8);
+  const ambLight = new THREE.HemisphereLight(0xffffff, 0xffffff, .2);
+  dirLight.position.set(-1, 2, 1);
+
+  scene.add(dirLight, ambLight);
+
+
+  // ---- some helpers
+  scene.add(new THREE.AxisHelper(50));
+  scene.add(new THREE.GridHelper(10000, 100));
+
+
+  // ---- initialize modules
+  cube.init(scene);
+
+
+  return renderer.domElement;
+}
+
+
+export function setSize(width, height) {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.render(scene, camera);
 }
 
 
 export function update(timestamp) {
+  controls.update();
+
+  cube.update(timestamp);
 }
 
 
 export function render() {
   renderer.render(scene, camera);
-}
-
-
-function initScene() {
-  scene.fog = new THREE.FogExp2(0x000000, 0.00045);
-
-  scene.add(new THREE.AxisHelper(50));
-
-  let grid = new THREE.GridHelper(10000, 100);
-  grid.material.opacity = .5;
-  scene.add(grid);
-}
-
-
-function createCamera(scene) {
-  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
-
-  camera.position.fromArray([0, 100, 500]);
-  camera.lookAt(new THREE.Vector3(0, 160, 0));
-
-  scene.add(camera);
-
-  return camera;
-}
-
-
-function createRenderer() {
-  const renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
-
-  renderer.setClearColor(0x000000, 0);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-
-  return renderer;
-}
-
-
-function initLights(scene) {
-  const directionalLight = new THREE.DirectionalLight(0xffffff, .3);
-  const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
-
-  directionalLight.position.set(0, 1, -.5);
-
-  scene.add(directionalLight);
-  scene.add(hemisphereLight);
-  //scene.add(new THREE.DirectionalLightHelper(directionalLight, 50))
-  //scene.add(new THREE.HemisphereLightHelper(hemisphereLight, 50));
 }
