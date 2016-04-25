@@ -12,12 +12,12 @@ This is my personal preference boilerplate and starting-point for three.js proje
 
  - a minimalistic demo-application
  - `three.js`, `dat-gui` preconfigured for simple applications
- - `npm run`-based build toolchain
- - browserify and babel configured for ES6
+ - `npm run`-based build and development/autobuild-toolchain
+ - `browserify` and `babel` configured for ES6
  - configuration to load three.js externally
- - stylus is used as 
- - a development-server
- - build-for-production task
+ - `stylus` is used for stylesheets (with `autoprefixer`)
+ - a development-server (`budo`)
+ - build-for-production task (`uglify`, `html-inline`)
 
 ## now what?
 
